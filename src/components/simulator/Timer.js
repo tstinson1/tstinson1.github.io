@@ -1,9 +1,9 @@
 const Timer = ({
     timer,
     runTimer,
-    incrementTimer,
     setRunTimer,
     setIncrementTimer,
+    reset
 }) => {
     const toggleRunTimer = () => {
         setRunTimer(!runTimer);
@@ -17,7 +17,8 @@ const Timer = ({
         <>
             <div className="btn-group" role="group">
                 <button
-                    className="btn btn-primary disabled"
+                    onClick={()=>{reset()}}
+                    className="btn btn-primary"
                     
                 >{timer}</button>
                 <button

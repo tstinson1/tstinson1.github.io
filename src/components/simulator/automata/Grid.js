@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Cell from "./Cell";
-const Grid = ({update, setUpdate, neighborhood, transitions}) => {
-    const intitialState = Array.from({length: 14},()=> Array.from({length: 14}, () => false));
+const Grid = ({update, setUpdate, neighborhood, transitions, resetGrid, setResetGrid}) => {
+    const intitialState = Array.from({length: 22},()=> Array.from({length: 32}, () => 0));
     const [grid, setGrid] = useState(intitialState);
     
 
@@ -19,15 +19,37 @@ const Grid = ({update, setUpdate, neighborhood, transitions}) => {
             for (let c = 2; c < grid[0].length-2; c++){
                 if (grid[r][c] === undefined) {
                     console.log('danger')
+                    continue;
                 }
                 const currState = (grid[r][c]).toString()+'-';
-                const neighbors = []
-                neighbors.push(grid[r-1][c])
-                neighbors.push(grid[r][c-1])
-                neighbors.push(grid[r][c+1])
-                neighbors.push(grid[r+1][c])
-                const key = currState+neighbors.join('');
-                if (transitions[key] == undefined) {
+                let neighbors = 0;
+                if (neighborhood === 0) {
+                    neighbors += grid[r-1][c]
+                    neighbors += grid[r][c-1]
+                    neighbors += grid[r+1][c]
+                    neighbors += grid[r][c+1]
+                } else if (neighborhood === 1) {
+                    neighbors += grid[r-1][c-1]
+                    neighbors += grid[r-1][c]
+                    neighbors += grid[r-1][c+1]
+                    neighbors += grid[r][c-1]
+                    neighbors += grid[r][c+1]
+                    neighbors += grid[r+1][c-1]
+                    neighbors += grid[r+1][c]
+                    neighbors += grid[r+1][c+1]
+                } else {
+                    neighbors += grid[r-2][c]
+                    neighbors += grid[r-1][c]
+                    neighbors += grid[r][c-2]
+                    neighbors += grid[r][c-1]
+                    neighbors += grid[r][c+1]
+                    neighbors += grid[r][c+2]
+                    neighbors += grid[r+1][c]
+                    neighbors += grid[r+2][c]
+                }
+                
+                const key = currState+neighbors.toString();
+                if (transitions[key] === undefined) {
                     console.log('badstring', key)
                 }
                 next[r][c] = transitions[key];
@@ -41,7 +63,11 @@ const Grid = ({update, setUpdate, neighborhood, transitions}) => {
             nextGeneration()
             setUpdate(false);
         }
-    }, [update])
+        if (resetGrid) {
+            setGrid(intitialState);
+            setResetGrid(false);
+        }
+    }, [update, resetGrid])
 
     return(
         <div>
